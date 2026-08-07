@@ -1,0 +1,49 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "weeks", "minutesInterval": 1 }]
+        }
+      },
+      "name": "Schedule Trigger (Weekly)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything?q=properti+indonesia&apiKey=YOUR_API_KEY",
+        "options": {}
+      },
+      "name": "Fetch Property News (HTTP Request)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a social media manager for Rumah123. Based on this news summary: {{$json.articles[0].description}}, generate an engaging Instagram caption with a strong hook, bullet points, and relevant hashtags."
+            }
+          ]
+        }
+      },
+      "name": "OpenAI / Gemini Generator",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (Weekly)": {
+      "main": [[{ "node": "Fetch Property News (HTTP Request)", "type": "main", "index": 0 }]]
+    },
+    "Fetch Property News (HTTP Request)": {
+      "main": [[{ "node": "OpenAI / Gemini Generator", "type": "main", "index": 0 }]]
+    }
+  }
+}
